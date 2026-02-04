@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | SokoLink Electronics</title>
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <!-- Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, var(--light-shade) 0%, #ffffff 100%);
+        }
+
+        .login-card {
+            background: var(--white);
+            padding: 40px;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .brand-logo {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-brand);
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            font-size: 0.9rem;
+            color: var(--text-color);
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-wrapper i {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: 1.2rem;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 12px 12px 40px;
+            /* Space for icon */
+            border: 1px solid #ddd;
+            border-radius: var(--radius-md);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--action-color);
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+        }
+
+        button.btn-login {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--primary-brand);
+            color: white;
+            border: none;
+            border-radius: var(--radius-md);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        button.btn-login:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-2px);
+        }
+
+        .message {
+            margin-top: 20px;
+            font-size: 0.9rem;
+            padding: 10px;
+            border-radius: var(--radius-sm);
+            display: none;
+            /* Hidden by default */
+        }
+
+        .message.error {
+            display: block;
+            background-color: #ffe6e6;
+            color: var(--danger);
+            border: 1px solid #ffcccc;
+        }
+
+        .message.success {
+            display: block;
+            background-color: #e6fffa;
+            color: var(--success);
+            border: 1px solid #ccffe6;
+        }
+
+        .footer-text {
+            margin-top: 20px;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .checkbox-wrapper {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            gap: 8px;
+        }
+
+        .checkbox-wrapper input {
+            width: auto;
+            margin: 0;
+            cursor: pointer;
+        }
+
+        .checkbox-wrapper label {
+            margin: 0;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        /* Mobile Responsive Styles */
+        @media (max-width: 480px) {
+            body {
+                padding: 16px;
+            }
+
+            .login-card {
+                padding: 24px 20px;
+                margin: 0;
+            }
+
+            .brand-logo {
+                font-size: 1.5rem;
+                margin-bottom: 24px;
+            }
+
+            .form-group {
+                margin-bottom: 16px;
+            }
+
+            .form-group label {
+                font-size: 0.85rem;
+            }
+
+            .form-group input {
+                padding: 10px 10px 10px 36px;
+                font-size: 0.95rem;
+            }
+
+            .input-wrapper i {
+                font-size: 1rem;
+                left: 10px;
+            }
+
+            button.btn-login {
+                padding: 10px;
+                font-size: 0.95rem;
+            }
+
+            .message {
+                font-size: 0.85rem;
+                padding: 8px;
+            }
+
+            .footer-text {
+                font-size: 0.8rem;
+            }
+
+            .checkbox-wrapper {
+                margin-bottom: 16px;
+            }
+
+            .checkbox-wrapper label {
+                font-size: 0.85rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="login-card">
+        <div class="brand-logo">
+            <i class="ph ph-circuitry"></i> SokoLink
+        </div>
+        <form id="login-form">
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <div class="input-wrapper">
+                    <i class="ph ph-envelope"></i>
+                    <input type="email" id="email" name="email" required placeholder="name@example.com">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <div class="input-wrapper">
+                    <i class="ph ph-lock"></i>
+                    <input type="password" id="password" name="password" required placeholder="••••••••">
+                </div>
+            </div>
+            <div class="checkbox-wrapper">
+                <input type="checkbox" id="remember" name="remember">
+                <label for="remember">Remember me</label>
+            </div>
+            <button type="submit" class="btn-login">Sign In</button>
+        </form>
+        <div id="login-message" class="message"></div>
+        <div class="footer-text">
+            &copy; 2026 SokoLink Electronics
+        </div>
+    </div>
+
+    <script src="../assets/js/auth.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,21 @@
+# Database config
+config/db.php
+
+# XAMPP / PHP
+*.log
+*.tmp
+.htaccess
+
+# OS
+Thumbs.db
+.DS_Store
+
+# IDE
+.vscode/
+.gemini/
+.agent/
+brain/
+implementation_plan.md
+task.md
+walkthrough.md
+SokoLink Electronics.md

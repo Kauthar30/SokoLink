@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | SokoLink Electronics</title>
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/admin.css">
+    <!-- Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+    <!-- Loading Screen -->
+    <div id="auth-loading"
+        style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #f0f2f5; display: flex; align-items: center; justify-content: center; z-index: 9999;">
+        <div style="text-align: center;">
+            <div
+                style="width: 40px; height: 40px; border: 4px solid #e0e0e0; border-top-color: #00509E; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 16px;">
+            </div>
+            <p style="color: #666; font-family: 'Poppins', sans-serif;">Loading...</p>
+        </div>
+        <style>
+            @keyframes spin {
+                to {
+                    transform: rotate(360deg);
+                }
+            }
+        </style>
+    </div>
+
+    <div class="admin-container" style="display: none;" id="admin-container">
+        <!-- Sidebar Overlay for Mobile -->
+        <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="brand">
+                <div style="display: flex; align-items: center; gap: 12px; flex: 1;">
+                    <i class="ph ph-circuitry" style="font-size: 24px; color: var(--action-color);"></i>
+                    <h2>SokoLink</h2>
+                </div>
+                <button class="sidebar-close" id="sidebar-close-btn">
+                    <i class="ph ph-x"></i>
+                </button>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="#" class="active" id="nav-dashboard"><i class="ph ph-squares-four"></i> Dashboard</a>
+                    </li>
+                    <li><a href="#" id="nav-products"><i class="ph ph-package"></i> Products</a></li>
+                    <li><a href="#" id="nav-orders"><i class="ph ph-shopping-cart"></i> Orders</a></li>
+                    <li><a href="#" id="nav-users"><i class="ph ph-users"></i> Users</a></li>
+                    <li><a href="#" id="nav-settings"><i class="ph ph-gear"></i> Settings</a></li>
+                    <li><a href="javascript:void(0)" id="logout-btn"><i class="ph ph-sign-out"></i> Logout</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header>
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <button class="mobile-menu-toggle" id="mobile-menu-toggle">
+                        <i class="ph ph-list"></i>
+                    </button>
+                    <h1>Dashboard Overview</h1>
+                </div>
+                <div class="user-info">
+                    <div class="avatar-circle">
+                        <i class="ph ph-user-circle"></i>
+                    </div>
+                    <span id="admin-name">Admin</span>
+                </div>
+            </header>
+
+            <!-- Dashboard View -->
+            <section id="dashboard-view">
+                <!-- Stats Cards -->
+                <div class="stats-cards">
+                    <div class="card stat-card">
+                        <div class="stat-icon" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                            <i class="ph ph-shopping-cart"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>Total Orders</h3>
+                            <p id="total-orders">0</p>
+                        </div>
+                    </div>
+                    <div class="card stat-card">
+                        <div class="stat-icon" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                            <i class="ph ph-package"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>Total Products</h3>
+                            <p id="total-products">0</p>
+                        </div>
+                    </div>
+                    <div class="card stat-card">
+                        <div class="stat-icon" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+                            <i class="ph ph-users"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>Total Users</h3>
+                            <p id="total-users">0</p>
+                        </div>
+                    </div>
+                    <div class="card stat-card">
+                        <div class="stat-icon" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);">
+                            <i class="ph ph-currency-dollar"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>Revenue</h3>
+                            <p id="total-revenue">TSH 0</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Chart and Quick Actions Row -->
+                <div class="dashboard-grid">
+                    <!-- Sales Chart -->
+                    <div class="card chart-card">
+                        <div class="card-header">
+                            <h3><i class="ph ph-chart-line"></i> Sales Overview</h3>
+                            <select id="chart-period" class="period-select">
+                                <option value="week">This Week</option>
+                                <option value="month">This Month</option>
+                                <option value="year">This Year</option>
+                            </select>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="salesChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Quick Actions -->
+                    <div class="card quick-actions-card">
+                        <div class="card-header">
+                            <h3><i class="ph ph-lightning"></i> Quick Actions</h3>
+                        </div>
+                        <div class="quick-actions">
+                            <button class="action-btn"
+                                onclick="document.getElementById('nav-products').click(); setTimeout(() => document.getElementById('add-product-btn').click(), 100);">
+                                <i class="ph ph-plus-circle"></i>
+                                <span>Add Product</span>
+                            </button>
+                            <button class="action-btn"
+                                onclick="document.getElementById('nav-users').click(); setTimeout(() => document.getElementById('create-user-btn').click(), 100);">
+                                <i class="ph ph-user-plus"></i>
+                                <span>Add User</span>
+                            </button>
+                            <button class="action-btn" onclick="document.getElementById('nav-orders').click();">
+                                <i class="ph ph-eye"></i>
+                                <span>View Orders</span>
+                            </button>
+                            <button class="action-btn" onclick="document.getElementById('nav-settings').click();">
+                                <i class="ph ph-gear"></i>
+                                <span>Settings</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Orders and Top Products Row -->
+                <div class="dashboard-grid">
+                    <!-- Recent Orders -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3><i class="ph ph-clock"></i> Recent Orders</h3>
+                            <a href="#" onclick="document.getElementById('nav-orders').click(); return false;"
+                                class="view-all-link">View All</a>
+                        </div>
+                        <div id="recent-orders-list">
+                            <p class="loading-text">Loading...</p>
+                        </div>
+                    </div>
+
+                    <!-- Top Products -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3><i class="ph ph-star"></i> Top Products</h3>
+                            <a href="#" onclick="document.getElementById('nav-products').click(); return false;"
+                                class="view-all-link">View All</a>
+                        </div>
+                        <div id="top-products-list">
+                            <p class="loading-text">Loading...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Activity Feed -->
+                <div class="card activity-card">
+                    <div class="card-header">
+                        <h3><i class="ph ph-bell"></i> Recent Activity</h3>
+                    </div>
+                    <div id="activity-feed" class="activity-feed">
+                        <p class="loading-text" style="padding: 20px; text-align: center; color: var(--text-muted);">
+                            Loading activity...</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Products View -->
+            <section id="products-view" class="hidden">
+                <div class="section-header">
+                    <h2>Product Management</h2>
+                    <div style="display: flex; gap: 10px;">
+                        <button id="manage-categories-btn" class="btn-primary"
+                            style="background-color: var(--primary-brand);"><i class="ph ph-list"></i> Manage
+                            Categories</button>
+                        <button id="add-product-btn" class="btn-primary"><i class="ph ph-plus"></i> Add Product</button>
+                    </div>
+                </div>
+                <div id="product-list">
+                    <!-- Products table will be loaded here -->
+                </div>
+            </section>
+
+            <!-- Categories View -->
+            <section id="categories-view" class="hidden">
+                <div class="section-header">
+                    <h2>Category Management</h2>
+                    <div style="display: flex; gap: 10px;">
+                        <button id="back-to-products-btn" class="btn-primary"
+                            style="background-color: var(--text-muted);"><i class="ph ph-arrow-left"></i> Back to
+                            Products</button>
+                        <button id="add-category-btn" class="btn-primary"><i class="ph ph-plus"></i> Add
+                            Category</button>
+                    </div>
+                </div>
+                <div id="category-list">
+                    <!-- Categories table will be loaded here -->
+                </div>
+            </section>
+
+            <!-- Orders View -->
+            <section id="orders-view" class="hidden">
+                <div class="section-header">
+                    <h2>Order Management</h2>
+                </div>
+                <div id="order-list">
+                    <!-- Orders table -->
+                </div>
+            </section>
+
+            <!-- Users View -->
+            <section id="users-view" class="hidden">
+                <div class="section-header">
+                    <h2>User Management</h2>
+                    <button id="create-user-btn" class="btn-primary"><i class="ph ph-user-plus"></i> Create
+                        User</button>
+                </div>
+                <div id="user-list">
+                    <!-- Users table will be populated here -->
+                </div>
+            </section>
+
+            <!-- Settings View -->
+            <section id="settings-view" class="hidden">
+                <h2>Settings</h2>
+                <div class="card">
+                    <p style="font-size: 1rem; font-weight: 400;">System Version: 1.0.0</p>
+                    <p style="font-size: 1rem; font-weight: 400;">PHP Version:
+                        <?php echo phpversion(); ?>
+                    </p>
+                </div>
+            </section>
+
+            <!-- Add/Edit Product Modal -->
+            <div id="product-modal" class="modal hidden">
+                <div class="modal-content">
+                    <span class="close-modal"><i class="ph ph-x"></i></span>
+                    <h2 id="product-modal-title">Add New Product</h2>
+                    <form id="product-form">
+                        <input type="hidden" id="product-id" name="product_id">
+                        <div class="form-group">
+                            <label for="product-name">Product Name</label>
+                            <input type="text" id="product-name" name="name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="product-category">Category</label>
+                            <select id="product-category" name="category_id" required>
+                                <!-- Categories will be populated here -->
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="product-price">Price</label>
+                            <input type="number" id="product-price" name="price" step="0.01" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="product-stock">Stock</label>
+                            <input type="number" id="product-stock" name="stock" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="product-description">Description</label>
+                            <textarea id="product-description" name="description"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="product-image">Image</label>
+                            <input type="file" id="product-image" name="image" accept="image/*">
+                            <p id="current-image-info"
+                                style="font-size: 0.8rem; color: var(--text-muted); margin-top: 4px;"></p>
+                        </div>
+                        <button type="submit" class="btn-primary" id="product-submit-btn">Save Product</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Create User Modal -->
+            <div id="create-user-modal" class="modal hidden">
+                <div class="modal-content">
+                    <span class="close-modal-user"><i class="ph ph-x"></i></span>
+                    <h2>Create New User</h2>
+                    <form id="create-user-form">
+                        <div class="form-group">
+                            <label for="user-fullname">Full Name</label>
+                            <input type="text" id="user-fullname" name="full_name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="user-email">Email</label>
+                            <input type="email" id="user-email" name="email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="user-password">Password</label>
+                            <input type="password" id="user-password" name="password" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="user-role">Role</label>
+                            <select id="user-role" name="role">
+                                <option value="customer">Customer</option>
+                                <option value="admin">Admin</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn-primary">Create User</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Add/Edit Category Modal -->
+            <div id="category-modal" class="modal hidden">
+                <div class="modal-content">
+                    <span class="close-modal-category"
+                        style="position: absolute; top: 20px; right: 20px; font-size: 24px; cursor: pointer; color: var(--text-muted);"><i
+                            class="ph ph-x"></i></span>
+                    <h2 id="category-modal-title">Add New Category</h2>
+                    <form id="category-form">
+                        <input type="hidden" id="category-id" name="category_id">
+                        <div class="form-group">
+                            <label for="category-name">Category Name</label>
+                            <input type="text" id="category-name" name="name" required>
+                        </div>
+                        <button type="submit" class="btn-primary" id="category-submit-btn">Save Category</button>
+                    </form>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <script src="../assets/js/admin.js"></script>
+</body>
+
+</html>
