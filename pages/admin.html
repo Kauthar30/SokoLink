@@ -54,7 +54,7 @@
                     <li><a href="#" id="nav-products"><i class="ph ph-package"></i> Products</a></li>
                     <li><a href="#" id="nav-orders"><i class="ph ph-shopping-cart"></i> Orders</a></li>
                     <li><a href="#" id="nav-users"><i class="ph ph-users"></i> Users</a></li>
-                    <li><a href="#" id="nav-settings"><i class="ph ph-gear"></i> Settings</a></li>
+
                     <li><a href="javascript:void(0)" id="logout-btn"><i class="ph ph-sign-out"></i> Logout</a></li>
                 </ul>
             </nav>
@@ -156,10 +156,7 @@
                                 <i class="ph ph-eye"></i>
                                 <span>View Orders</span>
                             </button>
-                            <button class="action-btn" onclick="document.getElementById('nav-settings').click();">
-                                <i class="ph ph-gear"></i>
-                                <span>Settings</span>
-                            </button>
+
                         </div>
                     </div>
                 </div>
@@ -258,16 +255,7 @@
                 </div>
             </section>
 
-            <!-- Settings View -->
-            <section id="settings-view" class="hidden">
-                <h2>Settings</h2>
-                <div class="card">
-                    <p style="font-size: 1rem; font-weight: 400;">System Version: 1.0.0</p>
-                    <p style="font-size: 1rem; font-weight: 400;">PHP Version:
-                        <?php echo phpversion(); ?>
-                    </p>
-                </div>
-            </section>
+
 
             <!-- Add/Edit Product Modal -->
             <div id="product-modal" class="modal hidden">
@@ -353,6 +341,34 @@
                             <input type="text" id="category-name" name="name" required>
                         </div>
                         <button type="submit" class="btn-primary" id="category-submit-btn">Save Category</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Change Password Modal -->
+            <div id="password-modal" class="modal hidden">
+                <div class="modal-content">
+                    <span class="close-modal-password"
+                        style="position: absolute; top: 20px; right: 20px; font-size: 24px; cursor: pointer; color: var(--text-muted);"><i
+                            class="ph ph-x"></i></span>
+                    <h2>Change User Password</h2>
+                    <p style="margin-bottom: 20px; color: var(--text-muted); font-size: 0.9rem;">Update the password for
+                        the selected user. Minimum 6 characters.</p>
+                    <form id="password-form">
+                        <input type="hidden" id="password-user-id" name="user_id">
+                        <div class="form-group">
+                            <label for="new-password">New Password</label>
+                            <input type="password" id="new-password" name="new_password" required minlength="6"
+                                placeholder="Enter new password">
+                        </div>
+                        <div class="form-group">
+                            <label for="confirm-password">Confirm Password</label>
+                            <input type="password" id="confirm-password" name="confirm_password" required minlength="6"
+                                placeholder="Confirm new password">
+                        </div>
+                        <button type="submit" class="btn-primary" style="width: 100%; justify-content: center;">
+                            <i class="ph ph-key"></i> Update Password
+                        </button>
                     </form>
                 </div>
             </div>

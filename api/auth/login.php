@@ -44,7 +44,7 @@ try {
                 "success" => true,
                 "message" => "Login successful",
                 "role" => $user['role'],
-                "redirect" => ($user['role'] === 'admin') ? 'admin.html' : '../index.html' // Redirect based on role
+                "redirect" => ($user['role'] === 'admin') ? 'admin.html' : '../user/dashboard.php'
             ]);
         } else {
             echo json_encode(["success" => false, "message" => "Invalid email or password."]);

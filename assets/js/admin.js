@@ -275,12 +275,62 @@ function initAdminDashboard() {
         });
     }
 
-    // Modal Background Click for User Modal
+    // Password Modal Logic
+    const passwordModal = document.getElementById('password-modal');
+    const closePasswordModal = document.querySelector('.close-modal-password');
+    const passwordForm = document.getElementById('password-form');
+
+    if (closePasswordModal) {
+        closePasswordModal.addEventListener('click', () => {
+            passwordModal.classList.add('hidden');
+        });
+    }
+
+    // Modal Background Click for Password Modal
     window.addEventListener('click', (event) => {
-        if (event.target == userModal) {
-            userModal.classList.add('hidden');
+        if (event.target == passwordModal) {
+            passwordModal.classList.add('hidden');
         }
     });
+
+    if (passwordForm) {
+        passwordForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const userId = document.getElementById('password-user-id').value;
+            const newPassword = document.getElementById('new-password').value;
+            const confirmPassword = document.getElementById('confirm-password').value;
+
+            if (newPassword !== confirmPassword) {
+                alert("Passwords do not match!");
+                return;
+            }
+
+            if (newPassword.length < 6) {
+                alert("Password must be at least 6 characters!");
+                return;
+            }
+
+            try {
+                const response = await fetch('../api/users/update_password.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ user_id: userId, new_password: newPassword })
+                });
+                const result = await response.json();
+
+                if (result.success) {
+                    alert('Password updated successfully!');
+                    passwordModal.classList.add('hidden');
+                    passwordForm.reset();
+                } else {
+                    alert(result.message);
+                }
+            } catch (error) {
+                console.error(error);
+                alert('Failed to update password');
+            }
+        });
+    }
 
     if (createUserForm) {
         createUserForm.addEventListener('submit', async (e) => {
@@ -413,77 +463,112 @@ function getTimeAgo(date) {
     return Math.floor(seconds) + " seconds ago";
 }
 
-// Sales Chart
-function initSalesChart() {
+// Sales Chart - Using Real Data
+async function initSalesChart() {
     const ctx = document.getElementById('salesChart');
     if (!ctx) return;
 
-    new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-            datasets: [{
-                label: 'Sales',
-                data: [1200, 1900, 1500, 2100, 1800, 2400, 2000],
-                borderColor: '#00509E',
-                backgroundColor: 'rgba(0, 80, 158, 0.1)',
-                fill: true,
-                tension: 0.4,
-                pointBackgroundColor: '#00509E',
-                pointBorderColor: '#fff',
-                pointBorderWidth: 2,
-                pointRadius: 4
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: { display: false }
+    try {
+        const response = await fetch('../api/admin/sales_data.php');
+        const result = await response.json();
+
+        let labels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+        let data = [0, 0, 0, 0, 0, 0, 0];
+
+        if (result.success) {
+            labels = result.labels;
+            data = result.data;
+        }
+
+        // Destroy existing chart if it exists
+        if (window.salesChartInstance) {
+            window.salesChartInstance.destroy();
+        }
+
+        window.salesChartInstance = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Sales (TSH)',
+                    data: data,
+                    borderColor: '#00509E',
+                    backgroundColor: 'rgba(0, 80, 158, 0.1)',
+                    fill: true,
+                    tension: 0.4,
+                    pointBackgroundColor: '#00509E',
+                    pointBorderColor: '#fff',
+                    pointBorderWidth: 2,
+                    pointRadius: 4
+                }]
             },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    grid: { color: '#f0f0f0' }
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: function (context) {
+                                return 'TSH ' + context.raw.toLocaleString();
+                            }
+                        }
+                    }
                 },
-                x: {
-                    grid: { display: false }
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: { color: '#f0f0f0' },
+                        ticks: {
+                            callback: function (value) {
+                                return 'TSH ' + value.toLocaleString();
+                            }
+                        }
+                    },
+                    x: {
+                        grid: { display: false }
+                    }
                 }
             }
-        }
-    });
+        });
+    } catch (error) {
+        console.error('Error loading sales chart:', error);
+    }
 }
 
-// Recent Orders for Dashboard
+// Recent Orders for Dashboard - Using Admin API
 async function loadRecentOrders() {
     const container = document.getElementById('recent-orders-list');
     if (!container) return;
 
     try {
-        const response = await fetch('../api/orders/read.php');
+        const response = await fetch('../api/orders/admin_read.php');
         const result = await response.json();
 
-        if (result.success && result.data.length > 0) {
+        if (result.success && result.data && result.data.length > 0) {
             const orders = result.data.slice(0, 5); // Get first 5
             let html = `<table class="mini-table">
                 <thead><tr><th>Order</th><th>Customer</th><th>Status</th><th>Total</th></tr></thead>
                 <tbody>`;
 
             orders.forEach(order => {
+                const statusClass = order.status === 'completed' ? 'status-completed' :
+                    order.status === 'cancelled' ? 'status-cancelled' : 'status-pending';
                 html += `<tr>
                     <td>#${order.order_id}</td>
                     <td>${order.full_name}</td>
-                    <td><span class="status-badge ${order.status}">${order.status}</span></td>
-                    <td>TSH ${order.total_amount}</td>
+                    <td><span class="status-badge ${statusClass}">${order.status}</span></td>
+                    <td>TSH ${Number(order.total_amount).toLocaleString()}</td>
                 </tr>`;
             });
 
             html += '</tbody></table>';
             container.innerHTML = html;
         } else {
-            container.innerHTML = '<p class="loading-text">No recent orders</p>';
+            container.innerHTML = '<p class="loading-text">No orders yet</p>';
         }
     } catch (error) {
+        console.error('Error loading recent orders:', error);
         container.innerHTML = '<p class="loading-text">Could not load orders</p>';
     }
 }
@@ -811,6 +896,9 @@ async function fetchUsers() {
                         <td>${user.role}</td>
                         <td>${new Date(user.created_at).toLocaleDateString()}</td>
                         <td>
+                            <button class="btn-primary btn-sm" onclick="changePassword(${user.user_id})" style="margin-right: 5px;">
+                                <i class="ph ph-key"></i> Key
+                            </button>
                             <button class="btn-danger btn-sm" onclick="deleteUser(${user.user_id})">Delete</button>
                         </td>
                     </tr>
@@ -828,11 +916,16 @@ async function fetchUsers() {
     }
 }
 
+window.changePassword = function (id) {
+    const passwordModal = document.getElementById('password-modal');
+    document.getElementById('password-user-id').value = id;
+    document.getElementById('password-form').reset();
+    passwordModal.classList.remove('hidden');
+}
+
 // --- Order Management ---
 async function fetchOrders() {
     const listContainer = document.getElementById('orders-view');
-    // Note: We are injecting directly into the section for simplicity as there was no #order-list container in HTML, 
-    // but better practice is to have a container. I will overwrite the content after the header.
 
     // Check if header exists, if not recreate it
     if (!listContainer.querySelector('h2')) {
@@ -843,7 +936,7 @@ async function fetchOrders() {
     tableContainer.innerHTML = '<p>Loading orders...</p>';
 
     try {
-        const response = await fetch('../api/orders/read.php');
+        const response = await fetch('../api/orders/admin_read.php');
         const result = await response.json();
 
         if (result.success) {
@@ -858,6 +951,7 @@ async function fetchOrders() {
                         <tr>
                             <th>Order ID</th>
                             <th>Customer</th>
+                            <th>Items</th>
                             <th>Total</th>
                             <th>Status</th>
                             <th>Date</th>
@@ -868,17 +962,26 @@ async function fetchOrders() {
             `;
 
             result.data.forEach(order => {
+                const statusClass = order.status === 'completed' ? 'status-completed' :
+                    order.status === 'cancelled' ? 'status-cancelled' : 'status-pending';
                 html += `
                     <tr>
                         <td>#${order.order_id}</td>
-                        <td>${order.full_name}</td>
-                        <td>TSH ${order.total_amount}</td>
                         <td>
-                            <span class="status-badge ${order.status}">${order.status}</span>
+                            <strong>${order.full_name}</strong><br>
+                            <small style="color: #666;">${order.email}</small>
+                        </td>
+                        <td>${order.item_count} item(s)</td>
+                        <td>TSH ${Number(order.total_amount).toLocaleString()}</td>
+                        <td>
+                            <span class="status-badge ${statusClass}">${order.status}</span>
                         </td>
                         <td>${new Date(order.created_at).toLocaleDateString()}</td>
                         <td>
-                            <select onchange="updateOrderStatus(${order.order_id}, this.value)">
+                            <button class="btn-view" onclick="viewOrderDetails(${order.order_id})" style="margin-right: 5px;">
+                                <i class="ph ph-eye"></i> View
+                            </button>
+                            <select onchange="updateOrderStatus(${order.order_id}, this.value)" style="padding: 5px; border-radius: 5px; border: 1px solid #ddd;">
                                 <option value="pending" ${order.status === 'pending' ? 'selected' : ''}>Pending</option>
                                 <option value="completed" ${order.status === 'completed' ? 'selected' : ''}>Completed</option>
                                 <option value="cancelled" ${order.status === 'cancelled' ? 'selected' : ''}>Cancelled</option>
@@ -899,6 +1002,117 @@ async function fetchOrders() {
     }
 }
 
+window.viewOrderDetails = async function (orderId) {
+    try {
+        const response = await fetch(`../api/orders/admin_details.php?id=${orderId}`);
+        const result = await response.json();
+
+        if (!result.success) {
+            alert(result.message);
+            return;
+        }
+
+        const order = result.order;
+        const items = result.items;
+
+        // Calculate subtotal
+        let subtotal = 0;
+        items.forEach(item => {
+            subtotal += item.price_each * item.quantity;
+        });
+
+        // Build items HTML
+        let itemsHtml = '';
+        items.forEach(item => {
+            const lineTotal = item.price_each * item.quantity;
+            const imagePath = item.image_url ? `../assets/uploads/${item.image_url}` : '../assets/uploads/placeholder.png';
+            itemsHtml += `
+                <div style="display: flex; gap: 15px; padding: 12px 0; border-bottom: 1px solid #f0f0f0;">
+                    <img src="${imagePath}" alt="${item.name}" style="width: 60px; height: 60px; object-fit: cover; border-radius: 8px;">
+                    <div style="flex: 1;">
+                        <strong>${item.name}</strong>
+                        <div style="color: #666; font-size: 0.85rem;">Qty: ${item.quantity} × TSH ${Number(item.price_each).toLocaleString()}</div>
+                    </div>
+                    <div style="font-weight: 600;">TSH ${Number(lineTotal).toLocaleString()}</div>
+                </div>
+            `;
+        });
+
+        const statusClass = order.status === 'completed' ? 'status-completed' :
+            order.status === 'cancelled' ? 'status-cancelled' : 'status-pending';
+
+        const modalHtml = `
+            <div id="order-modal-overlay" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 9999; display: flex; align-items: center; justify-content: center;">
+                <div style="background: white; border-radius: 16px; max-width: 700px; width: 90%; max-height: 90vh; overflow-y: auto; padding: 30px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+                        <h2 style="margin: 0;">Order #${order.order_id}</h2>
+                        <button onclick="closeOrderModal()" style="background: none; border: none; font-size: 1.5rem; cursor: pointer;">&times;</button>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 25px;">
+                        <div style="background: #f8fafc; padding: 20px; border-radius: 12px;">
+                            <h4 style="margin: 0 0 15px 0; color: #00509E;"><i class="ph ph-user"></i> Customer Details</h4>
+                            <p style="margin: 5px 0;"><strong>Name:</strong> ${order.full_name}</p>
+                            <p style="margin: 5px 0;"><strong>Email:</strong> ${order.email}</p>
+                            <p style="margin: 5px 0;"><strong>Phone:</strong> ${order.phone || 'Not provided'}</p>
+                        </div>
+                        <div style="background: #f8fafc; padding: 20px; border-radius: 12px;">
+                            <h4 style="margin: 0 0 15px 0; color: #00509E;"><i class="ph ph-map-pin"></i> Delivery Address</h4>
+                            <p style="margin: 0;">${order.address || 'No address provided'}</p>
+                        </div>
+                    </div>
+
+                    <div style="margin-bottom: 25px;">
+                        <h4 style="margin: 0 0 15px 0;"><i class="ph ph-package"></i> Order Items</h4>
+                        ${itemsHtml}
+                    </div>
+
+                    <div style="background: #f0f9ff; padding: 20px; border-radius: 12px; margin-bottom: 20px;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                            <span>Subtotal:</span>
+                            <span>TSH ${Number(subtotal).toLocaleString()}</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                            <span>Shipping:</span>
+                            <span>TSH 5,000</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; font-weight: 700; font-size: 1.2rem; padding-top: 10px; border-top: 2px solid #00509E;">
+                            <span>Total:</span>
+                            <span>TSH ${Number(order.total_amount).toLocaleString()}</span>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <span style="color: #666;">Status:</span>
+                            <span class="status-badge ${statusClass}" style="margin-left: 10px;">${order.status}</span>
+                        </div>
+                        <div>
+                            <span style="color: #666;">Order Date:</span>
+                            <strong style="margin-left: 10px;">${new Date(order.created_at).toLocaleString()}</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        // Remove existing modal if any
+        const existingModal = document.getElementById('order-modal-overlay');
+        if (existingModal) existingModal.remove();
+
+        document.body.insertAdjacentHTML('beforeend', modalHtml);
+
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Failed to load order details.');
+    }
+}
+
+window.closeOrderModal = function () {
+    const modal = document.getElementById('order-modal-overlay');
+    if (modal) modal.remove();
+}
+
 window.updateOrderStatus = async function (id, status) {
     try {
         const response = await fetch('../api/orders/update_status.php', {
@@ -909,7 +1123,7 @@ window.updateOrderStatus = async function (id, status) {
         const result = await response.json();
 
         if (result.success) {
-            // Optional: alert('Status updated');
+            fetchOrders(); // Refresh the list
             fetchDashboardStats();
         } else {
             alert('Failed to update status');

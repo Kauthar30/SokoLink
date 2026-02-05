@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login | SokoLink Electronics</title>
+    <title>Register | SokoLink Electronics</title>
     <link rel="stylesheet" href="../assets/css/style.css">
     <!-- Phosphor Icons -->
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
@@ -128,25 +128,6 @@
             color: var(--text-muted);
         }
 
-        .checkbox-wrapper {
-            display: flex;
-            align-items: center;
-            margin-bottom: 20px;
-            gap: 8px;
-        }
-
-        .checkbox-wrapper input {
-            width: auto;
-            margin: 0;
-            cursor: pointer;
-        }
-
-        .checkbox-wrapper label {
-            margin: 0;
-            cursor: pointer;
-            user-select: none;
-        }
-
         /* Mobile Responsive Styles */
         @media (max-width: 480px) {
             body {
@@ -156,51 +137,6 @@
             .login-card {
                 padding: 24px 20px;
                 margin: 0;
-            }
-
-            .brand-logo {
-                font-size: 1.5rem;
-                margin-bottom: 24px;
-            }
-
-            .form-group {
-                margin-bottom: 16px;
-            }
-
-            .form-group label {
-                font-size: 0.85rem;
-            }
-
-            .form-group input {
-                padding: 10px 10px 10px 36px;
-                font-size: 0.95rem;
-            }
-
-            .input-wrapper i {
-                font-size: 1rem;
-                left: 10px;
-            }
-
-            button.btn-login {
-                padding: 10px;
-                font-size: 0.95rem;
-            }
-
-            .message {
-                font-size: 0.85rem;
-                padding: 8px;
-            }
-
-            .footer-text {
-                font-size: 0.8rem;
-            }
-
-            .checkbox-wrapper {
-                margin-bottom: 16px;
-            }
-
-            .checkbox-wrapper label {
-                font-size: 0.85rem;
             }
         }
     </style>
@@ -212,7 +148,14 @@
         <div class="brand-logo">
             <i class="ph ph-circuitry"></i> SokoLink
         </div>
-        <form id="login-form">
+        <form id="register-form">
+            <div class="form-group">
+                <label for="full_name">Full Name</label>
+                <div class="input-wrapper">
+                    <i class="ph ph-user"></i>
+                    <input type="text" id="full_name" name="full_name" required placeholder="John Doe">
+                </div>
+            </div>
             <div class="form-group">
                 <label for="email">Email Address</label>
                 <div class="input-wrapper">
@@ -227,16 +170,21 @@
                     <input type="password" id="password" name="password" required placeholder="••••••••">
                 </div>
             </div>
-            <div class="checkbox-wrapper">
-                <input type="checkbox" id="remember" name="remember">
-                <label for="remember">Remember me</label>
+            <div class="form-group">
+                <label for="confirm_password">Confirm Password</label>
+                <div class="input-wrapper">
+                    <i class="ph ph-lock-key"></i>
+                    <input type="password" id="confirm_password" name="confirm_password" required
+                        placeholder="••••••••">
+                </div>
             </div>
-            <button type="submit" class="btn-login">Sign In</button>
+
+            <button type="submit" class="btn-login">Create Account</button>
         </form>
-        <div id="login-message" class="message"></div>
+        <div id="register-message" class="message"></div>
         <div class="footer-text">
-            Don't have an account? <a href="register.html"
-                style="color: var(--primary-brand); font-weight: 600; text-decoration: none;">Register here</a>
+            Already have an account? <a href="login.html"
+                style="color: var(--primary-brand); font-weight: 600; text-decoration: none;">Login here</a>
         </div>
     </div>
 

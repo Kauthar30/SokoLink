@@ -483,19 +483,43 @@ section {
     text-transform: capitalize;
 }
 
-.status-badge.pending {
+.status-badge.pending,
+.status-badge.status-pending {
     background-color: #fff3cd;
     color: #856404;
 }
 
-.status-badge.completed {
+.status-badge.completed,
+.status-badge.status-completed {
     background-color: #d4edda;
     color: #155724;
 }
 
-.status-badge.cancelled {
+.status-badge.cancelled,
+.status-badge.status-cancelled {
     background-color: #f8d7da;
     color: #721c24;
+}
+
+/* View Button */
+.btn-view {
+    background-color: #00509E;
+    color: white;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 0.85rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    transition: all 0.3s;
+}
+
+.btn-view:hover {
+    background-color: #003366;
+    transform: translateY(-1px);
 }
 
 /* Buttons */
@@ -533,6 +557,11 @@ section {
 
 .btn-danger:hover {
     background-color: #c82333;
+}
+
+.btn-sm {
+    padding: 6px 12px !important;
+    font-size: 0.85rem !important;
 }
 
 /* Forms & Modals */

@@ -19,22 +19,7 @@
 <body>
 
     <!-- Navigation -->
-    <nav>
-        <a href="index.php" class="logo">
-            <i class="ph-fill ph-circuitry"></i> SokoLink
-        </a>
-        <ul class="nav-links">
-            <li><a href="#home">Home</a></li>
-            <li><a href="#categories">Categories</a></li>
-            <li><a href="#arrivals">New Arrivals</a></li>
-            <li><a href="#about">About Us</a></li>
-        </ul>
-        <div class="nav-actions">
-            <i class="ph ph-magnifying-glass"></i>
-            <i class="ph ph-shopping-cart"></i>
-            <a href="pages/login.html" style="color: inherit; text-decoration: none;"><i class="ph ph-user"></i></a>
-        </div>
-    </nav>
+    <?php include 'includes/header.php'; ?>
 
     <!-- Hero Section -->
     <section class="hero" id="home">
@@ -44,7 +29,8 @@
                 Innovation at your fingertips
             </div>
             <h1 id="hero-title" class="text-fade"><span>The Future of</span> <span>Electronics.</span></h1>
-            <p id="hero-desc" class="text-fade">Discover a curated collection of high-performance tech designed to elevate your lifestyle. From smartphones to solar solutions, we bring the best to you.</p>
+            <p id="hero-desc" class="text-fade">Discover a curated collection of high-performance tech designed to
+                elevate your lifestyle. From smartphones to solar solutions, we bring the best to you.</p>
             <div class="hero-actions">
                 <a href="#arrivals" class="btn-premium">Explore Shop <i class="ph-bold ph-arrow-right"></i></a>
                 <a href="#about" class="btn-secondary">Learn More</a>
@@ -85,31 +71,9 @@
             <h2>Shop by Category</h2>
             <p>Browse our extensive collection of tech products</p>
         </div>
-        <div class="categories-grid">
-            <div class="category-card">
-                <img src="assets/uploads/placeholder.png" alt="Phones">
-                <div class="category-info">
-                    <h3>Smartphones</h3>
-                </div>
-            </div>
-            <div class="category-card">
-                <img src="assets/uploads/placeholder.png" alt="Laptops">
-                <div class="category-info">
-                    <h3>Computing</h3>
-                </div>
-            </div>
-            <div class="category-card">
-                <img src="assets/uploads/placeholder.png" alt="Power">
-                <div class="category-info">
-                    <h3>Solar & Power</h3>
-                </div>
-            </div>
-            <div class="category-card">
-                <img src="assets/uploads/placeholder.png" alt="Audio">
-                <div class="category-info">
-                    <h3>Audio & Video</h3>
-                </div>
-            </div>
+        <div class="categories-grid" id="categories-grid">
+            <!-- Dynamically Loaded -->
+            <p style="grid-column: 1/-1; text-align: center;">Loading categories...</p>
         </div>
     </section>
 
@@ -125,52 +89,160 @@
         </div>
     </section>
 
-    <!-- Footer -->
-    <footer style="background: #fff; padding: 80px 8% 40px; border-top: 1px solid #eee;">
-        <div style="display: grid; grid-template-columns: 2fr 1fr 1fr 1.5fr; gap: 60px; margin-bottom: 60px;">
-            <div>
-                <a href="#" class="logo" style="margin-bottom: 25px;">
-                    <i class="ph-fill ph-circuitry"></i> SokoLink
-                </a>
-                <p style="color: var(--text-muted); line-height: 1.6; max-width: 300px;">
-                    Experience the best in electronics with SokoLink. We provide authentic, high-quality technology
-                    solutions across East Africa.
-                </p>
+    <!-- Stats Counter Section -->
+    <section class="stats-section">
+        <div class="stat-item">
+            <span class="stat-number">10K+</span>
+            <span class="stat-label">Happy Customers</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-number">500+</span>
+            <span class="stat-label">Products Available</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-number">24/7</span>
+            <span class="stat-label">Customer Support</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-number">15+</span>
+            <span class="stat-label">Years Experience</span>
+        </div>
+    </section>
+
+    <!-- Why Choose Us Section -->
+    <section class="section why-choose" id="about">
+        <div class="why-choose-content">
+            <div class="why-text">
+                <span class="section-badge">Why SokoLink</span>
+                <h2>East Africa's Most Trusted Electronics Partner</h2>
+                <p>We believe in providing more than just products. Our commitment to quality, authenticity, and
+                    customer satisfaction sets us apart from the rest.</p>
+
+                <div class="why-features">
+                    <div class="why-feature-item">
+                        <i class="ph-fill ph-seal-check"></i>
+                        <div>
+                            <h4>100% Authentic Products</h4>
+                            <p>Every item is sourced directly from authorized distributors</p>
+                        </div>
+                    </div>
+                    <div class="why-feature-item">
+                        <i class="ph-fill ph-lightning"></i>
+                        <div>
+                            <h4>Fast Nationwide Delivery</h4>
+                            <p>Get your orders delivered across Tanzania within 48 hours</p>
+                        </div>
+                    </div>
+                    <div class="why-feature-item">
+                        <i class="ph-fill ph-handshake"></i>
+                        <div>
+                            <h4>Warranty & After-Sales</h4>
+                            <p>Comprehensive warranty coverage with dedicated support</p>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div>
-                <h4 style="margin-bottom: 25px;">Quick Links</h4>
-                <ul style="list-style: none; color: var(--text-muted); line-height: 2;">
-                    <li>Home</li>
-                    <li>Shop</li>
-                    <li>Promotions</li>
-                    <li>Contact</li>
-                </ul>
+            <div class="why-image">
+                <img src="assets/images/hero_natural.png" alt="SokoLink Store">
             </div>
-            <div>
-                <h4 style="margin-bottom: 25px;">Support</h4>
-                <ul style="list-style: none; color: var(--text-muted); line-height: 2;">
-                    <li>Privacy Policy</li>
-                    <li>Terms of Service</li>
-                    <li>Shipping Info</li>
-                    <li>FAQ</li>
-                </ul>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section class="section testimonials-section" style="background: #fff;">
+        <div class="section-title">
+            <h2>What Our Customers Say</h2>
+            <p>Real reviews from real customers across Tanzania</p>
+        </div>
+        <div class="testimonials-grid">
+            <div class="testimonial-card">
+                <div class="testimonial-rating">
+                    <i class="ph-fill ph-star"></i>
+                    <i class="ph-fill ph-star"></i>
+                    <i class="ph-fill ph-star"></i>
+                    <i class="ph-fill ph-star"></i>
+                    <i class="ph-fill ph-star"></i>
+                </div>
+                <p>"Best electronics store in Dar! The Samsung phone I bought is 100% original and came with full
+                    warranty. Will definitely buy again."</p>
+                <div class="testimonial-author">
+                    <div class="author-avatar">JM</div>
+                    <div>
+                        <h5>John Mwakasege</h5>
+                        <span>Dar es Salaam</span>
+                    </div>
+                </div>
             </div>
-            <div>
-                <h4 style="margin-bottom: 25px;">Stay Connected</h4>
-                <p style="color: var(--text-muted); margin-bottom: 20px;">Subscribe to receive updates and exclusive
-                    offers.</p>
-                <div style="display: flex; gap: 10px;">
-                    <input type="email" placeholder="Email Address"
-                        style="padding: 12px; border: 1px solid #ddd; border-radius: 8px; flex: 1;">
-                    <button class="btn-premium" style="padding: 12px 20px;">Join</button>
+            <div class="testimonial-card">
+                <div class="testimonial-rating">
+                    <i class="ph-fill ph-star"></i>
+                    <i class="ph-fill ph-star"></i>
+                    <i class="ph-fill ph-star"></i>
+                    <i class="ph-fill ph-star"></i>
+                    <i class="ph-fill ph-star"></i>
+                </div>
+                <p>"Ordered a solar panel system for my shop. Delivery was super fast and installation support was
+                    excellent. Highly recommended!"</p>
+                <div class="testimonial-author">
+                    <div class="author-avatar">FA</div>
+                    <div>
+                        <h5>Fatuma Ali</h5>
+                        <span>Arusha</span>
+                    </div>
+                </div>
+            </div>
+            <div class="testimonial-card">
+                <div class="testimonial-rating">
+                    <i class="ph-fill ph-star"></i>
+                    <i class="ph-fill ph-star"></i>
+                    <i class="ph-fill ph-star"></i>
+                    <i class="ph-fill ph-star"></i>
+                    <i class="ph-fill ph-star-half"></i>
+                </div>
+                <p>"The customer service is amazing! They helped me choose the perfect laptop for my business. Prices
+                    are fair and products are genuine."</p>
+                <div class="testimonial-author">
+                    <div class="author-avatar">BK</div>
+                    <div>
+                        <h5>Baraka Kimaro</h5>
+                        <span>Mwanza</span>
+                    </div>
                 </div>
             </div>
         </div>
-        <div
-            style="border-top: 1px solid #eee; padding-top: 30px; text-align: center; color: var(--text-muted); font-size: 0.9rem;">
-            &copy; 2026 SokoLink Electronics. All rights reserved.
+    </section>
+
+    <!-- Brands Section -->
+    <section class="brands-section">
+        <div class="section-title" style="margin-bottom: 40px;">
+            <h2>Trusted Brands We Carry</h2>
         </div>
-    </footer>
+        <div class="brands-grid">
+            <div class="brand-item">Samsung</div>
+            <div class="brand-item">Apple</div>
+            <div class="brand-item">Sony</div>
+            <div class="brand-item">LG</div>
+            <div class="brand-item">Hisense</div>
+            <div class="brand-item">JBL</div>
+        </div>
+    </section>
+
+    <!-- Newsletter CTA Section -->
+    <section class="newsletter-section">
+        <div class="newsletter-content">
+            <i class="ph-fill ph-envelope-simple"></i>
+            <h2>Get Exclusive Deals & Updates</h2>
+            <p>Subscribe to our newsletter and be the first to know about new arrivals, special offers, and tech tips!
+            </p>
+            <form class="newsletter-form" onsubmit="return false;">
+                <input type="email" placeholder="Enter your email address">
+                <button type="submit" class="btn-premium">Subscribe <i class="ph-bold ph-arrow-right"></i></button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <?php include 'includes/footer.php'; ?>
 
     <!-- Scripts -->
     <script src="assets/js/landing.js"></script>

@@ -1,5 +1,5 @@
 <?php
-// api/orders/read.php - Get user's orders
+// api/user/profile.php - Get user profile
 session_start();
 header("Content-Type: application/json");
 require_once '../../config/db.php';
@@ -15,22 +15,19 @@ try {
     $database = new Database();
     $db = $database->getConnection();
 
-    $query = "SELECT o.order_id, o.total_amount, o.status, o.created_at,
-              COUNT(oi.item_id) as item_count
-              FROM orders o
-              LEFT JOIN order_items oi ON o.order_id = oi.order_id
-              WHERE o.user_id = :user_id
-              GROUP BY o.order_id
-              ORDER BY o.created_at DESC";
-
+    $query = "SELECT user_id, full_name, email, phone, address, created_at FROM users WHERE user_id = :user_id";
     $stmt = $db->prepare($query);
     $stmt->execute([':user_id' => $user_id]);
-    $orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    echo json_encode([
-        "success" => true,
-        "orders" => $orders
-    ]);
+    if ($user) {
+        echo json_encode([
+            "success" => true,
+            "user" => $user
+        ]);
+    } else {
+        echo json_encode(["success" => false, "message" => "User not found."]);
+    }
 
 } catch (PDOException $e) {
     echo json_encode(["success" => false, "message" => "Database error: " . $e->getMessage()]);

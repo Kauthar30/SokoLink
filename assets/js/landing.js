@@ -9,27 +9,57 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Fetch Products
+    // Fetch Products & Categories
     fetchNewArrivals();
+    fetchCategories();
 
     // Scroll Reveal Animation (Simulated)
-    const observerOptions = {
-        threshold: 0.1
-    };
-
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
                 entry.target.classList.add('reveal');
             }
         });
-    }, observerOptions);
+    }, { threshold: 0.1 });
 
     document.querySelectorAll('.section').forEach(section => {
         section.classList.add('reveal-init');
         observer.observe(section);
     });
 });
+
+async function fetchCategories() {
+    const list = document.getElementById('categories-grid');
+    if (!list) return;
+
+    try {
+        const response = await fetch('api/products/categories.php');
+        const result = await response.json();
+
+        if (result.success && result.data.length > 0) {
+            let html = '';
+            // Display first 4 categories for homepage
+            const categories = result.data.slice(0, 4);
+
+            categories.forEach(cat => {
+                html += `
+                    <div class="category-card" onclick="window.location.href='shop.php?category_id=${cat.category_id}'">
+                        <img src="assets/uploads/placeholder.png" alt="${cat.name}">
+                        <div class="category-info">
+                            <h3>${cat.name}</h3>
+                        </div>
+                    </div>
+                `;
+            });
+            list.innerHTML = html;
+        } else {
+            list.innerHTML = '<p style="grid-column: 1/-1; text-align: center;">No categories found.</p>';
+        }
+    } catch (error) {
+        console.error('Error fetching categories:', error);
+        list.innerHTML = '<p style="grid-column: 1/-1; text-align: center;">Could not load categories</p>';
+    }
+}
 
 async function fetchNewArrivals() {
     const container = document.getElementById('arrivals-grid');
@@ -76,10 +106,7 @@ async function fetchNewArrivals() {
     }
 }
 
-function addToCart(id) {
-    alert('Product added to cart!');
-    // Cart functionality can be expanded later
-}
+// addToCart is now provided by cart.js
 
 // Language Switcher Data
 const translations = [
